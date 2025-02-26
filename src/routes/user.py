@@ -79,3 +79,14 @@ def get_user_by_id(user_id: int, db: Session = Depends(get_db)):
         status_code=status.HTTP_404_NOT_FOUND,
         detail=f"User with the ID {user_id} not found in database"
     )
+
+@router.get("/{user_email}", response_model=UserResponse, status_code=status.HTTP_200_OK)
+def get_user_by_email(user_email: str, db: Session = Depends(get_db)):
+    existing_user = db.query(UserDB).filter(UserDB.id_email == user_email).first()
+    if existing_user:
+        return db_to_response(existing_user)
+
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail=f"User with the email {user_email} not found in database"
+    )
