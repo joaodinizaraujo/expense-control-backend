@@ -1,11 +1,19 @@
 from src.models.base import Base
-from sqlalchemy import Column, Integer, String, TIMESTAMP, Date, text, DECIMAL
+from sqlalchemy import (
+    Column,
+    Integer,
+    String,
+    TIMESTAMP,
+    Date,
+    text,
+    DECIMAL
+)
 
 
 class UserDB(Base):
     __tablename__ = "tb_users"
 
-    id = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+    id = Column(Integer, primary_key=True, autoincrement=True, nullable=False, index=True)
     id_email = Column(String(100), nullable=False, unique=True)
     id_cpf = Column(String(11), nullable=False, unique=True)
     dt_birthdate = Column(Date, nullable=False)
