@@ -31,8 +31,8 @@ def db_to_response(user: UserDB) -> UserResponse:
     )
 
 
-def get_password_hash(password: str) -> bytes:
-    return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
+def get_password_hash(password: str) -> str:
+    return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
@@ -99,7 +99,7 @@ def login(user: UserLogin, db: Session = Depends(get_db)) -> UserResponse:
             detail=f"User with the email {user.email} not found in database"
         )
 
-    if not verify_password(user.password, existing_user.password):
+    if not verify_password(user.password, existing_user.ds_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail=f"Incorrect password"
