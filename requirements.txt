@@ -1,5 +1,7 @@
 fastapi
 fastapi[standard]
+fastapi-cli
+uvicorn
 pydantic
 pydantic[Email]
 sqlalchemy
