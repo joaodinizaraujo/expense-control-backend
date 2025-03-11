@@ -6,4 +6,4 @@ RUN pip install virtualenv && python -m venv api-venv
 RUN /bin/bash -c "source api-venv/bin/activate && pip install -r requirements.txt"
 COPY . .
 EXPOSE 8000
-CMD ["api-venv/bin/python", "-m", "fastapi", "dev"]
+CMD ["api-venv/bin/python", "-m", "fastapi", "dev", "src/app.py"]
