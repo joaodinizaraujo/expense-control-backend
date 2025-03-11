@@ -6,3 +6,4 @@ sqlalchemy
 bcrypt
 psycopg2
 python-dotenv
+passlib

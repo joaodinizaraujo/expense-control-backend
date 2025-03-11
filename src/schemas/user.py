@@ -1,6 +1,6 @@
-from datetime import datetime, date
-from typing import Optional
 from pydantic import BaseModel, EmailStr, Field, field_validator
+from datetime import datetime, timedelta, date
+from typing import Optional
 import re
 
 
@@ -10,18 +10,11 @@ class UserBase(BaseModel):
     first_name: str = Field(..., description="User's first name", max_length=100)
     last_name: str = Field(..., description="User's last name", max_length=200)
     birthdate: date = Field(..., description="User's birthdate")
-    amount: float = Field(description="User's total amount")
 
     @field_validator("cpf")
     def validate_cpf(cls, v):
         if not re.match(r'^\d{11}$', v):
             raise ValueError("CPF must be 11 digits")
-        return v
-
-    @field_validator("amount")
-    def validate_amount(cls, v):
-        if v < 0:
-            raise ValueError("Amount must be higher than 0")
         return v
 
     @field_validator("birthdate")
@@ -37,8 +30,14 @@ class UserCreate(UserBase):
 
 class UserResponse(UserBase):
     id: int = Field(..., description="User's database ID")
-    created_at: datetime = Field(description="User's creation datetime")
+    created_at: Optional[datetime] = Field(description="User's creation datetime")
     updated_at: Optional[datetime] = Field(description="User's last update datetime")
+    amount: Optional[float] = Field(description="User's total amount")
 
     class Config:
         from_attributes = True
+
+
+class UserLogin(BaseModel):
+    email: EmailStr = Field(..., description="User's email address")
+    password: str = Field(..., description="User's password", min_length=8)

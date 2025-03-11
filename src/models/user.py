@@ -22,4 +22,4 @@ class UserDB(Base):
     ds_password = Column(String(100), nullable=False)
     ts_created_at = Column(TIMESTAMP, server_default=text("CURRENT_TIMESTAMP"), nullable=False)
     ts_updated_at = Column(TIMESTAMP, nullable=True)
-    vl_amount = Column(DECIMAL(10, 2), nullable=False, server_default=text("0"))
+    vl_amount = Column(DECIMAL(10, 2), server_default=text("0.00"), nullable=False)
