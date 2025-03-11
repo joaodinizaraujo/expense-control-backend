@@ -1,10 +1,9 @@
 import datetime
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
-from passlib.context import CryptContext
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
+import bcrypt
 
 from src.config.database import get_db
 from src.models.user import UserDB
@@ -16,7 +15,6 @@ router = APIRouter(
     tags=["users"],
     responses={404: {"description": "Not found"}},
 )
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def db_to_response(user: UserDB) -> UserResponse:
@@ -33,12 +31,12 @@ def db_to_response(user: UserDB) -> UserResponse:
     )
 
 
-def get_password_hash(password: str) -> str:
-    return pwd_context.hash(password)
+def get_password_hash(password: str) -> bytes:
+    return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
+    return bcrypt.checkpw(plain_password.encode("utf-8"), hashed_password.encode("utf-8"))
 
 
 @router.post("/", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
