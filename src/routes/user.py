@@ -28,11 +28,11 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 @router.post("/", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 def create_user(user: UserCreate, db: Session = Depends(get_db)) -> UserResponse:
     existing_user = db.query(UserDB).filter(
-        (UserDB.id_email == user.email) | (UserDB.id_cpf == user.cpf)
+        (UserDB.id_email == user.id_email) | (UserDB.id_cpf == user.id_cpf)
     ).first()
 
     if existing_user:
-        conflict_field = "Email" if existing_user.id_email == user.email else "CPF"
+        conflict_field = "Email" if existing_user.id_email == user.id_email else "CPF"
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail=f"{conflict_field} already registered"
@@ -44,13 +44,12 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)) -> UserResponse
         ts_created_at=datetime.datetime.now(datetime.UTC),
         ts_updated_at=None
     )
-    validated_user = UserResponse.model_validate(new_user)
 
     try:
         db.add(new_user)
         db.commit()
         db.refresh(new_user)
-        return validated_user
+        return UserResponse.model_validate(new_user)
     except IntegrityError as exc:
         db.rollback()
         raise HTTPException(

@@ -8,3 +8,4 @@ sqlalchemy
 bcrypt
 psycopg2
 python-dotenv
+python-dateutil

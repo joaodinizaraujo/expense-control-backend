@@ -1,5 +1,6 @@
 from pydantic import BaseModel, EmailStr, Field, field_validator, ConfigDict
-from datetime import datetime, timedelta, date
+from datetime import datetime, date
+from dateutil.relativedelta import relativedelta
 from typing import Optional
 import re
 
@@ -22,8 +23,9 @@ class UserBase(BaseModel):
 
     @field_validator("dt_birthdate")
     def validate_birthdate(cls, v):
-        if v > date.today():
-            raise ValueError("Birthdate cannot be in the future")
+        if v > date.today() - relativedelta(years=14):
+            raise ValueError(f"You must be at least 14 years old")
+
         return v
 
 
