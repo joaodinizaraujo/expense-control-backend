@@ -24,7 +24,7 @@ class UserBase(BaseModel):
     @field_validator("dt_birthdate")
     def validate_birthdate(cls, v):
         if v > date.today() - relativedelta(years=14):
-            raise ValueError(f"You must be at least 14 years old")
+            raise ValueError(f"you must be at least 14 years old")
 
         return v
 
