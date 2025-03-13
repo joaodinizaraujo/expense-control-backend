@@ -1,9 +1,9 @@
 import datetime
 
+import bcrypt
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
-import bcrypt
 
 from src.config.database import get_db
 from src.models.user import UserDB
@@ -15,20 +15,6 @@ router = APIRouter(
     tags=["users"],
     responses={404: {"description": "Not found"}},
 )
-
-
-def db_to_response(user: UserDB) -> UserResponse:
-    return UserResponse(
-        id=user.id,
-        email=user.id_email,
-        cpf=user.id_cpf,
-        birthdate=user.dt_birthdate,
-        first_name=user.nm_first_name,
-        last_name=user.nm_last_name,
-        created_at=user.ts_created_at,
-        updated_at=user.ts_updated_at,
-        amount=user.vl_amount
-    )
 
 
 def get_password_hash(password: str) -> str:
@@ -53,22 +39,18 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)) -> UserResponse
         )
 
     new_user = UserDB(
-        id_email=user.email,
-        id_cpf=user.cpf,
-        dt_birthdate=user.birthdate,
-        nm_first_name=user.first_name,
-        nm_last_name=user.last_name,
-        ds_password=get_password_hash(user.password),
+        **user.model_dump(),
         vl_amount=0,
         ts_created_at=datetime.datetime.now(datetime.UTC),
         ts_updated_at=None
     )
+    validated_user = UserResponse.model_validate(new_user)
 
     try:
         db.add(new_user)
         db.commit()
         db.refresh(new_user)
-        return db_to_response(new_user)
+        return validated_user
     except IntegrityError as exc:
         db.rollback()
         raise HTTPException(
@@ -81,7 +63,7 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)) -> UserResponse
 def get_user_by_id(user_id: int, db: Session = Depends(get_db)) -> UserResponse:
     existing_user = db.get(UserDB, user_id)
     if existing_user:
-        return db_to_response(existing_user)
+        return UserResponse.model_validate(existing_user)
 
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
@@ -105,4 +87,4 @@ def login(user: UserLogin, db: Session = Depends(get_db)) -> UserResponse:
             detail=f"Incorrect password"
         )
 
-    return db_to_response(existing_user)
+    return UserResponse.model_validate(existing_user)
