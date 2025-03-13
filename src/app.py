@@ -1,7 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from src.routes import user
+from src.routes import (
+    user,
+    transaction
+)
 
 # base.Base.metadata.create_all(bind=engine)
 
@@ -10,8 +13,6 @@ app = FastAPI(
     description="quero me mata",
     root_path="/api/v1"
 )
-
-app.include_router(user.router)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -22,6 +23,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(user.router)
+app.include_router(transaction.router)
 
 
 @app.get("/")

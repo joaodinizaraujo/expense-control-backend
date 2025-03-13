@@ -1,4 +1,5 @@
 from datetime import datetime, date
+from decimal import Decimal
 from typing import Optional
 
 from pydantic import BaseModel, Field, ConfigDict
@@ -11,13 +12,14 @@ class TransactionBase(BaseModel):
     dt_transaction: date = Field(..., description="Transaction's date", le=date.today())
     ds_description: str = Field(..., description="Transaction's description", max_length=200)
     ds_title: str = Field(..., description="Transaction's title", max_length=100)
-    vl_transaction: float = Field(..., description="Transaction's value", max_digits=10, decimal_places=2, gt=0)
+    vl_transaction: Decimal = Field(..., description="Transaction's value", max_digits=10, decimal_places=2, gt=0)
 
 
 class TransactionCreate(TransactionBase):
-    category_id: int = Field(..., description="Transaction's category id")
-    type_id: int = Field(..., description="Transaction's type id")
-    currency_id: int = Field(..., description="Transaction's currency")
+    fk_tb_users_id: int = Field(..., description="Transaction's user ID")
+    fk_tb_transaction_categories_id: int = Field(..., description="Transaction's category ID")
+    fk_tb_transaction_types_id: int = Field(..., description="Transaction's type ID")
+    fk_tb_currencies_id: int = Field(..., description="Transaction's currency ID")
 
 
 class TransactionResponse(TransactionBase):
