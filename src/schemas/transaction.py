@@ -24,8 +24,8 @@ class TransactionCreate(TransactionBase):
 
 class TransactionResponse(TransactionBase):
     id: int = Field(..., description="Transaction's database ID")
-    ts_created_at: datetime = Field(description="Transaction's creation datetime")
-    ts_updated_at: Optional[datetime] = Field(description="Transaction's last update datetime")
+    ts_created_at: datetime = Field(..., description="Transaction's creation datetime")
+    ts_updated_at: Optional[datetime] = Field(None, description="Transaction's last update datetime")
     fk_tb_transaction_categories_id: int = Field(..., description="Transaction's category ID")
     type: TransactionTypesResponse = Field(..., description="Transaction's type")
     currency: CurrenciesResponse = Field(..., description="Transaction's type")

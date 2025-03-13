@@ -71,9 +71,10 @@ def update_user(
             detail=f"User with ID {user_id} not found"
         )
 
-    kwargs = user.model_dump()
+    kwargs = user.model_dump(exclude_unset=True)
     for k, v in kwargs.items():
-        setattr(db_user, k, v)
+        if v is not None:
+            setattr(db_user, k, v)
 
     db_user.ts_updated_at = datetime.datetime.now(datetime.UTC)
 

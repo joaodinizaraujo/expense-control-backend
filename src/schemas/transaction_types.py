@@ -14,7 +14,7 @@ class TransactionTypesCreate(TransactionTypesBase):
 
 class TransactionTypesResponse(TransactionTypesBase):
     id: int = Field(..., description="Transaction Type's database ID")
-    ts_created_at: datetime = Field(description="Transaction Type's creation datetime")
-    ts_updated_at: Optional[datetime] = Field(description="Transaction Type's last update datetime")
+    ts_created_at: datetime = Field(..., description="Transaction Type's creation datetime")
+    ts_updated_at: Optional[datetime] = Field(None, description="Transaction Type's last update datetime")
 
     model_config = ConfigDict(from_attributes=True)
