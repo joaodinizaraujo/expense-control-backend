@@ -19,7 +19,7 @@ CREATE TABLE tb_transactions (
     ds_title VARCHAR(100) NOT NULL,
     vl_transaction DECIMAL(10, 2) NOT NULL,
     id SERIAL PRIMARY KEY NOT NULL,
-    ts_created_at TIMESTAMP NOT NULL,
+    ts_created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     ts_updated_at TIMESTAMP,
     fk_tb_transaction_categories_id INTEGER NOT NULL,
     fk_tb_users_id INTEGER NOT NULL,
@@ -31,20 +31,24 @@ CREATE TABLE tb_transaction_categories (
     id SERIAL PRIMARY KEY NOT NULL,
     ds_title VARCHAR(100) NOT NULL,
     ds_description VARCHAR(200),
-    ts_created_at TIMESTAMP NOT NULL,
+    ts_created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     ts_updated_at TIMESTAMP,
     fk_tb_users_id INTEGER NOT NULL
 );
 
 CREATE TABLE tb_transaction_types (
     id SERIAL PRIMARY KEY,
-    ds_title VARCHAR(100) UNIQUE
+    ds_title VARCHAR(100) UNIQUE,
+    ts_created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    ts_updated_at TIMESTAMP
 );
 
 CREATE TABLE tb_currencies (
     id SERIAL PRIMARY KEY,
     ds_title VARCHAR(100) UNIQUE,
-    cd_iso VARCHAR(3) UNIQUE
+    cd_iso VARCHAR(3) UNIQUE,
+    ts_created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    ts_updated_at TIMESTAMP
 );
  
 ALTER TABLE tb_transactions ADD CONSTRAINT FK_tb_transactions_2
