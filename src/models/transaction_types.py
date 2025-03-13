@@ -1,4 +1,3 @@
-from src.models.base import Base
 from sqlalchemy import (
     Column,
     Integer,
@@ -6,6 +5,8 @@ from sqlalchemy import (
     TIMESTAMP,
     text
 )
+
+from src.models.base import Base
 
 
 class TransactionTypesDB(Base):

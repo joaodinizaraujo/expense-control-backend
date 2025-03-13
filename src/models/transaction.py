@@ -11,7 +11,6 @@ from sqlalchemy.orm import relationship, Mapped
 
 from src.models.base import Base
 from src.models.currencies import CurrenciesDB
-from src.models.transaction_categories import TransactionCategoriesDB
 from src.models.transaction_types import TransactionTypesDB
 
 

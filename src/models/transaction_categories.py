@@ -1,6 +1,3 @@
-from sqlalchemy.orm import relationship
-
-from src.models.base import Base
 from sqlalchemy import (
     Column,
     Integer,
@@ -9,6 +6,8 @@ from sqlalchemy import (
     text,
     ForeignKey
 )
+
+from src.models.base import Base
 
 
 class TransactionCategoriesDB(Base):
