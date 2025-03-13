@@ -44,5 +44,5 @@ def get_transaction_by_id(transaction_id: int, db: Session = Depends(get_db)) ->
 
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
-        detail=f"Transaction with the ID {transaction_id} not found in database"
+        detail=f"Transaction with ID {transaction_id} not found in database"
     )

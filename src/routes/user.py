@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 
 from src.config.database import get_db
 from src.models.user import UserDB
-from src.schemas.user import UserCreate, UserResponse
+from src.schemas.user import UserCreate, UserResponse, UserUpdate
 from src.schemas.user import UserLogin
 
 router = APIRouter(
@@ -58,6 +58,37 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)) -> UserResponse
         )
 
 
+@router.patch("/{user_id}", response_model=UserResponse, status_code=status.HTTP_200_OK)
+def update_user(
+    user_id: int,
+    user: UserUpdate,
+    db: Session = Depends(get_db)
+) -> UserResponse:
+    db_user = db.query(UserDB).filter(UserDB.id == user_id).first()
+    if not db_user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"User with ID {user_id} not found"
+        )
+
+    kwargs = user.model_dump()
+    for k, v in kwargs.items():
+        setattr(db_user, k, v)
+
+    db_user.ts_updated_at = datetime.datetime.now(datetime.UTC)
+
+    try:
+        db.commit()
+        db.refresh(db_user)
+        return UserResponse.model_validate(db_user)
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Error updating user: {str(e)}"
+        )
+
+
 @router.get("/{user_id}", response_model=UserResponse, status_code=status.HTTP_200_OK)
 def get_user_by_id(user_id: int, db: Session = Depends(get_db)) -> UserResponse:
     existing_user = db.get(UserDB, user_id)
@@ -66,7 +97,7 @@ def get_user_by_id(user_id: int, db: Session = Depends(get_db)) -> UserResponse:
 
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
-        detail=f"User with the ID {user_id} not found in database"
+        detail=f"User with ID {user_id} not found in database"
     )
 
 
@@ -77,7 +108,7 @@ def login(user: UserLogin, db: Session = Depends(get_db)) -> UserResponse:
     if not existing_user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"User with the email {user.email} not found in database"
+            detail=f"User with email {user.email} not found in database"
         )
 
     if not verify_password(user.password, existing_user.ds_password):

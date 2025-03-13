@@ -48,3 +48,10 @@ class UserResponse(UserBase):
 class UserLogin(BaseModel):
     id_email: EmailStr = Field(..., description="User's email address", max_length=100)
     ds_password: str = Field(..., description="User's password", min_length=8, max_length=100)
+
+
+class UserUpdate(BaseModel):
+    id_email: Optional[EmailStr] = Field(..., description="User's email address", max_length=100)
+    nm_first_name: Optional[str] = Field(..., description="User's first name", max_length=100)
+    nm_last_name: Optional[str] = Field(..., description="User's last name", max_length=200)
+    vl_amount: Optional[float] = Field(description="User's total amount")
