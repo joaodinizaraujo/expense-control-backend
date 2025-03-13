@@ -31,6 +31,5 @@ class TransactionDB(Base):
     fk_tb_transaction_types_id = Column(Integer, ForeignKey("tb_transaction_types.id"), nullable=False)
     fk_tb_currencies_id = Column(Integer, ForeignKey("tb_currencies.id"), nullable=False)
 
-    category: Mapped[TransactionCategoriesDB] = relationship("TransactionCategoriesDB", lazy="joined")
     type: Mapped[TransactionTypesDB] = relationship("TransactionTypesDB", lazy="joined")
     currency: Mapped[CurrenciesDB] = relationship("CurrenciesDB", lazy="joined")
