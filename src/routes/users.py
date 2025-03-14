@@ -38,8 +38,10 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)) -> UserResponse
             detail=f"{conflict_field} already registered"
         )
 
+    dict_user = user.model_dump()
+    dict_user.pop("ds_password")
     new_user = UserDB(
-        **user.model_dump(),
+        **dict_user,
         ds_password=get_password_hash(user.ds_password),
         ts_created_at=datetime.datetime.now(datetime.UTC),
         ts_updated_at=None
