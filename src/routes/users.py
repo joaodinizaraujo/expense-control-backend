@@ -40,6 +40,7 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)) -> UserResponse
 
     new_user = UserDB(
         **user.model_dump(),
+        ds_password=get_password_hash(user.ds_password),
         ts_created_at=datetime.datetime.now(datetime.UTC),
         ts_updated_at=None
     )
@@ -111,10 +112,16 @@ def login(user: UserLogin, db: Session = Depends(get_db)) -> UserResponse:
             detail=f"User with email {user.id_email} not found in database"
         )
 
-    if not verify_password(user.ds_password, existing_user.ds_password):
+    try:
+        if not verify_password(user.ds_password, existing_user.ds_password):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail=f"Incorrect password"
+            )
+    except ValueError:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=f"Incorrect password"
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Password may have the incorrect format. Please, change your password"
         )
 
     return UserResponse.model_validate(existing_user)
