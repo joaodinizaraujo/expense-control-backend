@@ -104,12 +104,12 @@ def get_user_by_id(user_id: int, db: Session = Depends(get_db)) -> UserResponse:
 
 @router.post("/login", response_model=UserResponse, status_code=status.HTTP_200_OK)
 def login(user: UserLogin, db: Session = Depends(get_db)) -> UserResponse:
-    existing_user = db.query(UserDB).filter(UserDB.id_email == user.email).first()
+    existing_user = db.query(UserDB).filter(UserDB.id_email == user.id_email).first()
 
     if not existing_user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"User with email {user.email} not found in database"
+            detail=f"User with email {user.id_email} not found in database"
         )
 
     if not verify_password(user.password, existing_user.ds_password):
