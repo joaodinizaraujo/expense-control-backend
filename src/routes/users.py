@@ -112,7 +112,7 @@ def login(user: UserLogin, db: Session = Depends(get_db)) -> UserResponse:
             detail=f"User with email {user.id_email} not found in database"
         )
 
-    if not verify_password(user.password, existing_user.ds_password):
+    if not verify_password(user.ds_password, existing_user.ds_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail=f"Incorrect password"
