@@ -9,8 +9,7 @@ CREATE TABLE tb_users (
     id SERIAL PRIMARY KEY NOT NULL,
     ts_created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     ts_updated_at TIMESTAMP,
-    ds_password VARCHAR(100) NOT NULL,
-    vl_amount DECIMAL(10, 2) NOT NULL DEFAULT 0
+    ds_password VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE tb_transactions (

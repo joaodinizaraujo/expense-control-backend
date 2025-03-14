@@ -40,7 +40,6 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)) -> UserResponse
 
     new_user = UserDB(
         **user.model_dump(),
-        vl_amount=0,
         ts_created_at=datetime.datetime.now(datetime.UTC),
         ts_updated_at=None
     )

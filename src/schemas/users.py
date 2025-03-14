@@ -39,7 +39,6 @@ class UserResponse(UserBase):
     id: int = Field(..., description="User's database ID")
     ts_created_at: Optional[datetime] = Field(..., description="User's creation datetime")
     ts_updated_at: Optional[datetime] = Field(description="User's last update datetime")
-    vl_amount: Optional[float] = Field(..., description="User's total amount")
     transactions: list[TransactionResponse] = Field(..., description="User's transactions")
     categories: list[TransactionCategoriesResponse] = Field(..., description="User's created categories")
     goals: list[GoalsResponse] = Field(..., description="User's goals")
@@ -56,4 +55,3 @@ class UserUpdate(BaseModel):
     id_email: Optional[EmailStr] = Field(None, description="User's email address", max_length=100)
     nm_first_name: Optional[str] = Field(None, description="User's first name", max_length=100)
     nm_last_name: Optional[str] = Field(None, description="User's last name", max_length=200)
-    vl_amount: Optional[float] = Field(None, description="User's total amount")
