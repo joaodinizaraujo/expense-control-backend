@@ -23,8 +23,8 @@ CREATE TABLE tb_transactions (
     ts_updated_at TIMESTAMP,
     fk_tb_transaction_categories_id INTEGER NOT NULL,
     fk_tb_users_id INTEGER NOT NULL,
-    fk_tb_transaction_types_id SERIAL,
-    fk_tb_currencies_id SERIAL
+    fk_tb_transaction_types_id INTEGER NOT NULL,
+    fk_tb_currencies_id INTEGER NOT NULL
 );
 
 CREATE TABLE tb_transaction_categories (
@@ -37,16 +37,26 @@ CREATE TABLE tb_transaction_categories (
 );
 
 CREATE TABLE tb_transaction_types (
-    id SERIAL PRIMARY KEY,
-    ds_title VARCHAR(100) UNIQUE,
+    id SERIAL PRIMARY KEY NOT NULL,
+    ds_title VARCHAR(100) UNIQUE NOT NULL,
     ts_created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     ts_updated_at TIMESTAMP
 );
 
 CREATE TABLE tb_currencies (
-    id SERIAL PRIMARY KEY,
-    ds_title VARCHAR(100) UNIQUE,
-    cd_iso VARCHAR(3) UNIQUE,
+    id SERIAL PRIMARY KEY NOT NULL,
+    ds_title VARCHAR(100) UNIQUE NOT NULL,
+    cd_iso VARCHAR(3) UNIQUE NOT NULL,
+    ts_created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    ts_updated_at TIMESTAMP
+);
+
+CREATE TABLE tb_goals (
+    id SERIAL PRIMARY KEY NOT NULL,
+    ds_title VARCHAR(100) NOT NULL,
+    dt_end DATE NOT NULL,
+    vl_goal DECIMAL(10, 2) NOT NULL,
+    fk_tb_users_id INTEGER NOT NULL,
     ts_created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     ts_updated_at TIMESTAMP
 );
@@ -70,6 +80,11 @@ ALTER TABLE tb_transactions ADD CONSTRAINT FK_tb_transactions_5
     REFERENCES tb_currencies (id);
  
 ALTER TABLE tb_transaction_categories ADD CONSTRAINT FK_tb_transaction_categories_2
+    FOREIGN KEY (fk_tb_users_id)
+    REFERENCES tb_users (id)
+    ON DELETE CASCADE;
+
+ALTER TABLE tb_goals ADD CONSTRAINT FK_tb_goals_2
     FOREIGN KEY (fk_tb_users_id)
     REFERENCES tb_users (id)
     ON DELETE CASCADE;

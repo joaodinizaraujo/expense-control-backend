@@ -5,8 +5,8 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from src.config.database import get_db
-from src.models.transaction import TransactionDB
-from src.schemas.transaction import TransactionCreate, TransactionResponse
+from src.models.transactions import TransactionDB
+from src.schemas.transactions import TransactionCreate, TransactionResponse
 
 router = APIRouter(
     prefix="/transactions",

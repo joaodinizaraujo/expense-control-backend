@@ -5,7 +5,8 @@ from typing import Optional
 from dateutil.relativedelta import relativedelta
 from pydantic import BaseModel, EmailStr, Field, field_validator, ConfigDict
 
-from src.schemas.transaction import TransactionResponse
+from src.schemas.goals import GoalsResponse
+from src.schemas.transactions import TransactionResponse
 from src.schemas.transaction_categories import TransactionCategoriesResponse
 
 
@@ -41,6 +42,7 @@ class UserResponse(UserBase):
     vl_amount: Optional[float] = Field(..., description="User's total amount")
     transactions: list[TransactionResponse] = Field(..., description="User's transactions")
     categories: list[TransactionCategoriesResponse] = Field(..., description="User's created categories")
+    goals: list[GoalsResponse] = Field(..., description="User's goals")
 
     model_config = ConfigDict(from_attributes=True)
 

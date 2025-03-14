@@ -10,7 +10,8 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship, Mapped
 
 from src.models.base import Base
-from src.models.transaction import TransactionDB
+from src.models.goals import GoalsDB
+from src.models.transactions import TransactionDB
 from src.models.transaction_categories import TransactionCategoriesDB
 
 
@@ -30,3 +31,4 @@ class UserDB(Base):
 
     transactions: Mapped[list[TransactionDB]] = relationship("TransactionDB", lazy="joined")
     categories: Mapped[list[TransactionCategoriesDB]] = relationship("TransactionCategoriesDB", lazy="joined")
+    goals: Mapped[list[GoalsDB]] = relationship("GoalsDB", lazy="joined")

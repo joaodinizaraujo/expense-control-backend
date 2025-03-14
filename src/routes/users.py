@@ -6,9 +6,9 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from src.config.database import get_db
-from src.models.user import UserDB
-from src.schemas.user import UserCreate, UserResponse, UserUpdate
-from src.schemas.user import UserLogin
+from src.models.users import UserDB
+from src.schemas.users import UserCreate, UserResponse, UserUpdate
+from src.schemas.users import UserLogin
 
 router = APIRouter(
     prefix="/users",
