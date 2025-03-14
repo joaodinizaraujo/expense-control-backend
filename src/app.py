@@ -3,7 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from src.routes import (
     users,
-    transactions
+    transactions,
+    transaction_types
 )
 
 # base.Base.metadata.create_all(bind=engine)
@@ -26,6 +27,7 @@ app.add_middleware(
 
 app.include_router(users.router)
 app.include_router(transactions.router)
+app.include_router(transaction_types.router)
 
 
 @app.get("/")
