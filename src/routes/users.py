@@ -111,14 +111,13 @@ def get_user_by_id(user_id: int, db: Session = Depends(get_db)) -> UserResponse:
 def get_amount_by_id(user_id: int, db: Session = Depends(get_db)) -> AmountResponse:
     transactions = db.query(TransactionDB).filter(TransactionDB.fk_tb_users_id == user_id)
     if transactions.count() > 0:
-        amount_response = AmountResponse(amount=float(
+        return AmountResponse(amount=float(
             sum([
                 -t.vl_transaction if t.type.ds_title == PASSIVE_TYPE_TITLE
                 else t.vl_transaction
                 for t in transactions
             ])
         ))
-        return amount_response
 
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
