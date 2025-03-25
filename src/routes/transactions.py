@@ -46,3 +46,15 @@ def get_transaction_by_id(transaction_id: int, db: Session = Depends(get_db)) ->
         status_code=status.HTTP_404_NOT_FOUND,
         detail=f"Transaction with ID {transaction_id} not found in database"
     )
+
+
+@router.get("/user/{user_id}", response_model=list[TransactionResponse], status_code=status.HTTP_200_OK)
+def get_transactions_by_user(user_id: int, db: Session = Depends(get_db)) -> list[TransactionResponse]:
+    transactions = db.query(TransactionDB).filter(TransactionDB.fk_tb_users_id == user_id)
+    if transactions.count() > 0:
+        return [TransactionResponse.model_validate(t) for t in transactions]
+
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail=f"User with id {user_id} does not have transactions"
+    )
