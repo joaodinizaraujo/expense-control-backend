@@ -6,6 +6,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from src.config.database import get_db
+from src.models.transaction_types import PASSIVE_TYPE_TITLE
 from src.models.transactions import TransactionDB
 from src.models.users import UserDB
 from src.schemas.amount import AmountResponse
@@ -112,8 +113,8 @@ def get_amount_by_id(user_id: int, db: Session = Depends(get_db)) -> AmountRespo
     if transactions.count() > 0:
         amount_response = AmountResponse(amount=float(
             sum([
-                t.vl_transaction if t.type.ds_title == "ENTRADA"
-                else -t.vl_transaction
+                -t.vl_transaction if t.type.ds_title == PASSIVE_TYPE_TITLE
+                else t.vl_transaction
                 for t in transactions
             ])
         ))
