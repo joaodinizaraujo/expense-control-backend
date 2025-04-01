@@ -8,6 +8,7 @@ from sqlalchemy import (
 
 from src.models.base import Base
 
+PASSIVE_TYPE_TITLE = "SAÍDA"
 
 class TransactionTypesDB(Base):
     __tablename__ = "tb_transaction_types"

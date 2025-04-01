@@ -6,8 +6,10 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from src.config.database import get_db
+from src.models.transaction_types import PASSIVE_TYPE_TITLE
 from src.models.transactions import TransactionDB
 from src.models.users import UserDB
+from src.schemas.amount import AmountResponse
 from src.schemas.users import UserCreate, UserResponse, UserUpdate
 from src.schemas.users import UserLogin
 
@@ -63,9 +65,9 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)) -> UserResponse
 
 @router.patch("/{user_id}", response_model=UserResponse, status_code=status.HTTP_200_OK)
 def update_user(
-        user_id: int,
-        user: UserUpdate,
-        db: Session = Depends(get_db)
+    user_id: int,
+    user: UserUpdate,
+    db: Session = Depends(get_db)
 ) -> UserResponse:
     db_user = db.query(UserDB).filter(UserDB.id == user_id).first()
     if not db_user:
@@ -105,11 +107,17 @@ def get_user_by_id(user_id: int, db: Session = Depends(get_db)) -> UserResponse:
     )
 
 
-@router.get("/amount/{user_id}", response_model=float, status_code=status.HTTP_200_OK)
-def get_amount_by_id(user_id: int, db: Session = Depends(get_db)) -> float:
+@router.get("/amount/{user_id}", response_model=AmountResponse, status_code=status.HTTP_200_OK)
+def get_amount_by_id(user_id: int, db: Session = Depends(get_db)) -> AmountResponse:
     transactions = db.query(TransactionDB).filter(TransactionDB.fk_tb_users_id == user_id)
     if transactions.count() > 0:
-        return float(sum([t.vl_transaction if t.type.ds_title == "ENTRADA" else -t.vl_transaction for t in transactions]))
+        return AmountResponse(amount=float(
+            sum([
+                -t.vl_transaction if t.type.ds_title == PASSIVE_TYPE_TITLE
+                else t.vl_transaction
+                for t in transactions
+            ])
+        ))
 
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
