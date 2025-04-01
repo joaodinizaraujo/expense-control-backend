@@ -5,7 +5,8 @@ from src.routes import (
     users,
     transactions,
     transaction_types,
-    currencies
+    currencies,
+    transaction_categories
 )
 
 # base.Base.metadata.create_all(bind=engine)
@@ -30,6 +31,7 @@ app.include_router(users.router)
 app.include_router(transactions.router)
 app.include_router(transaction_types.router)
 app.include_router(currencies.router)
+app.include_router(transaction_categories.router)
 
 
 @app.get("/")
