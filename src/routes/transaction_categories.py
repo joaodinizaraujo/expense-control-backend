@@ -34,6 +34,29 @@ def get_transaction_category_by_id(
     )
 
 
+@router.delete(
+    "/{transaction_category_id}",
+    response_model=TransactionCategoriesResponse,
+    status_code=status.HTTP_200_OK
+)
+def delete_transaction_category_by_id(
+        transaction_category_id: int,
+        db: Session = Depends(get_db)
+) -> TransactionCategoriesResponse:
+    existing_category = db.get(TransactionCategoriesDB, transaction_category_id)
+
+    if not existing_category:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Transaction category with ID {transaction_category_id} not found in database"
+        )
+
+    db.delete(existing_category)
+    db.commit()
+
+    return TransactionCategoriesResponse.model_validate(existing_category)
+
+
 @router.post("/", response_model=TransactionCategoriesResponse, status_code=status.HTTP_201_CREATED)
 def create_transaction_category(
     transaction_category: TransactionCategoriesCreate,
