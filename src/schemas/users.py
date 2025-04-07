@@ -3,7 +3,7 @@ from datetime import datetime, date
 from typing import Optional
 
 from dateutil.relativedelta import relativedelta
-from pydantic import BaseModel, EmailStr, Field, field_validator, ConfigDict
+from pydantic import BaseModel, EmailStr, Field, field_validator, ConfigDict, computed_field
 
 from src.models.transaction_types import PASSIVE_TYPE_TITLE
 from src.schemas.goals import GoalsResponse
@@ -44,6 +44,7 @@ class UserResponse(UserBase):
     categories: list[TransactionCategoriesResponse] = Field(..., description="User's created categories")
     goals: list[GoalsResponse] = Field(..., description="User's goals")
 
+    @computed_field
     @property
     def amount(self) -> float:
         if len(self.transactions) > 0:
