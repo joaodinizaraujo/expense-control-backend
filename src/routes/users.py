@@ -1,4 +1,5 @@
 import datetime
+from collections import defaultdict
 
 import bcrypt
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -10,6 +11,7 @@ from src.models.transaction_types import PASSIVE_TYPE_TITLE
 from src.models.transactions import TransactionDB
 from src.models.users import UserDB
 from src.schemas.amount import AmountResponse
+from src.schemas.category_distribution import CategoryDistributionResponse
 from src.schemas.users import UserCreate, UserResponse, UserUpdate
 from src.schemas.users import UserLogin
 
@@ -118,6 +120,28 @@ def get_amount_by_id(user_id: int, db: Session = Depends(get_db)) -> AmountRespo
                 for t in transactions
             ])
         ))
+
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail=f"User with id {user_id} does not have transactions"
+    )
+
+
+@router.get("/category/{user_id}", response_model=CategoryDistributionResponse, status_code=status.HTTP_200_OK)
+def get_category_distribution_by_id(user_id: int, db: Session = Depends(get_db)) -> CategoryDistributionResponse:
+    transactions = db.query(TransactionDB).filter(TransactionDB.fk_tb_users_id == user_id)
+    if transactions.count() > 0:
+        total = len(transactions)
+        category_counts = defaultdict(int)
+
+        for t in transactions:
+            category_counts[t.category] += 1
+
+        categories = []
+        percentages = []
+        for category, count in category_counts.items():
+            categories.append(category)
+            percentages.append(round((count / total) * 100, 0))
 
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,

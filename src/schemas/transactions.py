@@ -5,6 +5,7 @@ from typing import Optional
 from pydantic import BaseModel, Field, ConfigDict
 
 from src.schemas.currencies import CurrenciesResponse
+from src.schemas.transaction_categories import TransactionCategoriesResponse
 from src.schemas.transaction_types import TransactionTypesResponse
 
 
@@ -29,5 +30,6 @@ class TransactionResponse(TransactionBase):
     fk_tb_transaction_categories_id: int = Field(..., description="Transaction's category ID")
     type: TransactionTypesResponse = Field(..., description="Transaction's type")
     currency: CurrenciesResponse = Field(..., description="Transaction's type")
+    category: TransactionCategoriesResponse = Field(..., description="Transaction's category")
 
     model_config = ConfigDict(from_attributes=True)

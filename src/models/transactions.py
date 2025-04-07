@@ -11,6 +11,7 @@ from sqlalchemy.orm import relationship, Mapped
 
 from src.models.base import Base
 from src.models.currencies import CurrenciesDB
+from src.models.transaction_categories import TransactionCategoriesDB
 from src.models.transaction_types import TransactionTypesDB
 
 
@@ -32,3 +33,4 @@ class TransactionDB(Base):
 
     type: Mapped[TransactionTypesDB] = relationship("TransactionTypesDB", lazy="joined")
     currency: Mapped[CurrenciesDB] = relationship("CurrenciesDB", lazy="joined")
+    category: Mapped[TransactionCategoriesDB] = relationship("TransactionCategoriesDB", lazy="joined")

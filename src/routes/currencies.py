@@ -14,9 +14,9 @@ router = APIRouter(
 
 @router.get("/", response_model=list[CurrenciesResponse], status_code=status.HTTP_200_OK)
 def get_currencies(db: Session = Depends(get_db)) -> list[CurrenciesResponse]:
-    types = db.query(CurrenciesDB).all()
-    if types:
-        return [CurrenciesResponse.model_validate(t) for t in types]
+    currencies = db.query(CurrenciesDB).all()
+    if currencies:
+        return [CurrenciesResponse.model_validate(c) for c in currencies]
 
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
