@@ -127,7 +127,7 @@ def get_amount_by_id(user_id: int, db: Session = Depends(get_db)) -> AmountRespo
     )
 
 
-@router.get("/category/{user_id}", response_model=CategoryDistributionResponse, status_code=status.HTTP_200_OK)
+@router.get("/category-distribution/{user_id}", response_model=CategoryDistributionResponse, status_code=status.HTTP_200_OK)
 def get_category_distribution_by_id(user_id: int, db: Session = Depends(get_db)) -> CategoryDistributionResponse:
     transactions = db.query(TransactionDB).filter(TransactionDB.fk_tb_users_id == user_id)
     if transactions.count() > 0:
