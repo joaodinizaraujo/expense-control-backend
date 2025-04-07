@@ -7,7 +7,6 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from src.config.database import get_db
-from src.models.transaction_types import PASSIVE_TYPE_TITLE
 from src.models.transactions import TransactionDB
 from src.models.users import UserDB
 from src.schemas.amount import AmountResponse
@@ -111,15 +110,9 @@ def get_user_by_id(user_id: int, db: Session = Depends(get_db)) -> UserResponse:
 
 @router.get("/amount/{user_id}", response_model=AmountResponse, status_code=status.HTTP_200_OK)
 def get_amount_by_id(user_id: int, db: Session = Depends(get_db)) -> AmountResponse:
-    transactions = db.query(TransactionDB).filter(TransactionDB.fk_tb_users_id == user_id)
-    if transactions.count() > 0:
-        return AmountResponse(amount=float(
-            sum([
-                -t.vl_transaction if t.type.ds_title == PASSIVE_TYPE_TITLE
-                else t.vl_transaction
-                for t in transactions
-            ])
-        ))
+    existing_user = db.get(UserDB, user_id)
+    if existing_user:
+        return AmountResponse(amount=UserResponse.model_validate(existing_user).amount)
 
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
