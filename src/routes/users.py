@@ -143,6 +143,8 @@ def get_category_distribution_by_id(user_id: int, db: Session = Depends(get_db))
             categories.append(category)
             percentages.append(round((count / total) * 100, 0))
 
+        return CategoryDistributionResponse(categories=categories, percentages=percentages)
+
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
         detail=f"User with id {user_id} does not have transactions"
