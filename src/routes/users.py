@@ -131,7 +131,7 @@ def get_amount_by_id(user_id: int, db: Session = Depends(get_db)) -> AmountRespo
 def get_category_distribution_by_id(user_id: int, db: Session = Depends(get_db)) -> CategoryDistributionResponse:
     transactions = db.query(TransactionDB).filter(TransactionDB.fk_tb_users_id == user_id)
     if transactions.count() > 0:
-        total = len(transactions)
+        total = transactions.count()
         category_counts = defaultdict(int)
 
         for t in transactions:
