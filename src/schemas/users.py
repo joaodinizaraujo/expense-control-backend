@@ -1,4 +1,5 @@
 import re
+from collections import defaultdict
 from datetime import datetime, date
 from typing import Optional
 
@@ -7,6 +8,7 @@ from pydantic import BaseModel, EmailStr, Field, field_validator, ConfigDict, co
 
 from src.models.transaction_types import PASSIVE_TYPE_TITLE
 from src.schemas.amount import AmountResponse
+from src.schemas.category_distribution import CategoryDistributionResponse
 from src.schemas.goals import GoalsResponse
 from src.schemas.transaction_categories import TransactionCategoriesResponse
 from src.schemas.transactions import TransactionResponse
@@ -66,6 +68,26 @@ class UserResponse(UserBase):
             income=0.0,
             outcome=0.0
         )
+    
+    @computed_field
+    @property
+    def category_distribution(self) -> CategoryDistributionResponse:
+        if len(self.transactions) > 0:
+            total = len(self.transactions)
+            category_counts = defaultdict(int)
+
+            for t in self.transactions:
+                category_counts[t.category] += 1
+
+            categories = []
+            percentages = []
+            for category, count in category_counts.items():
+                categories.append(category)
+                percentages.append(int((count / total) * 100))
+
+            return CategoryDistributionResponse(categories=categories, percentages=percentages)
+
+        return CategoryDistributionResponse(categories=[], percentages=[])
 
     model_config = ConfigDict(from_attributes=True)
 

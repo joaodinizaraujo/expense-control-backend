@@ -1,5 +1,4 @@
 import datetime
-from collections import defaultdict
 
 import bcrypt
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -7,10 +6,8 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from src.config.database import get_db
-from src.models.transactions import TransactionDB
 from src.models.users import UserDB
 from src.schemas.amount import AmountResponse
-from src.schemas.category_distribution import CategoryDistributionResponse
 from src.schemas.users import UserCreate, UserResponse, UserUpdate
 from src.schemas.users import UserLogin
 
@@ -113,30 +110,6 @@ def get_amount_by_id(user_id: int, db: Session = Depends(get_db)) -> AmountRespo
     existing_user = db.get(UserDB, user_id)
     if existing_user:
         return UserResponse.model_validate(existing_user).amount
-
-    raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND,
-        detail=f"User with id {user_id} does not have transactions"
-    )
-
-
-@router.get("/category-distribution/{user_id}", response_model=CategoryDistributionResponse, status_code=status.HTTP_200_OK)
-def get_category_distribution_by_id(user_id: int, db: Session = Depends(get_db)) -> CategoryDistributionResponse:
-    transactions = db.query(TransactionDB).filter(TransactionDB.fk_tb_users_id == user_id)
-    if transactions.count() > 0:
-        total = transactions.count()
-        category_counts = defaultdict(int)
-
-        for t in transactions:
-            category_counts[t.category] += 1
-
-        categories = []
-        percentages = []
-        for category, count in category_counts.items():
-            categories.append(category)
-            percentages.append(round((count / total) * 100, 0))
-
-        return CategoryDistributionResponse(categories=categories, percentages=percentages)
 
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
