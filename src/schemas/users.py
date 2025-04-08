@@ -68,24 +68,30 @@ class UserResponse(UserBase):
             income=0.0,
             outcome=0.0
         )
-    
+
     @computed_field
     @property
     def category_distribution(self) -> CategoryDistributionResponse:
         if len(self.transactions) > 0:
             total = len(self.transactions)
             category_counts = defaultdict(int)
+            category_objects = {}
 
             for t in self.transactions:
-                category_counts[t.category] += 1
+                key = id(t.category)
+                category_counts[key] += 1
+                category_objects[key] = t.category
 
             categories = []
             percentages = []
-            for category, count in category_counts.items():
-                categories.append(category)
+            for key, count in category_counts.items():
+                categories.append(category_objects[key])
                 percentages.append(int((count / total) * 100))
 
-            return CategoryDistributionResponse(categories=categories, percentages=percentages)
+            return CategoryDistributionResponse(
+                categories=categories,
+                percentages=percentages
+            )
 
         return CategoryDistributionResponse(categories=[], percentages=[])
 
