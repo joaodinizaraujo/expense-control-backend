@@ -112,7 +112,7 @@ def get_user_by_id(user_id: int, db: Session = Depends(get_db)) -> UserResponse:
 def get_amount_by_id(user_id: int, db: Session = Depends(get_db)) -> AmountResponse:
     existing_user = db.get(UserDB, user_id)
     if existing_user:
-        return AmountResponse(amount=UserResponse.model_validate(existing_user).amount)
+        return UserResponse.model_validate(existing_user).amount
 
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,

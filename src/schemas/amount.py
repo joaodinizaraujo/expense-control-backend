@@ -2,4 +2,5 @@ from pydantic import BaseModel, Field
 
 
 class AmountResponse(BaseModel):
-    amount: float = Field(..., description="User's amount")
+    income: float = Field(..., description="User's income")
+    outcome: float = Field(..., description="User's outcome")

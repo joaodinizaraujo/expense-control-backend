@@ -6,6 +6,7 @@ from dateutil.relativedelta import relativedelta
 from pydantic import BaseModel, EmailStr, Field, field_validator, ConfigDict, computed_field
 
 from src.models.transaction_types import PASSIVE_TYPE_TITLE
+from src.schemas.amount import AmountResponse
 from src.schemas.goals import GoalsResponse
 from src.schemas.transaction_categories import TransactionCategoriesResponse
 from src.schemas.transactions import TransactionResponse
@@ -46,17 +47,25 @@ class UserResponse(UserBase):
 
     @computed_field
     @property
-    def amount(self) -> float:
+    def amount(self) -> AmountResponse:
         if len(self.transactions) > 0:
-            return float(
-                sum([
-                    -t.vl_transaction if t.type.ds_title == PASSIVE_TYPE_TITLE
-                    else t.vl_transaction
+            return AmountResponse(
+                income=sum([
+                    t.vl_transaction if t.type.ds_title != PASSIVE_TYPE_TITLE
+                    else 0
+                    for t in self.transactions
+                ]),
+                outcome=sum([
+                    t.vl_transaction if t.type.ds_title == PASSIVE_TYPE_TITLE
+                    else 0
                     for t in self.transactions
                 ])
             )
 
-        return 0.0
+        return AmountResponse(
+            income=0.0,
+            outcome=0.0
+        )
 
     model_config = ConfigDict(from_attributes=True)
 
