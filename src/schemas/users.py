@@ -77,10 +77,9 @@ class UserResponse(UserBase):
             category_counts = defaultdict(int)
             category_objects = {}
 
-            for t in self.transactions:
-                key = id(t.category)
-                category_counts[key] += 1
-                category_objects[key] = t.category
+            for i in range(len(self.transactions)):
+                category_counts[i] += 1
+                category_objects[i] = self.transactions[i].category
 
             categories = []
             percentages = []
