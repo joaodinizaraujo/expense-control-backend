@@ -11,7 +11,7 @@ from src.schemas.transaction_types import TransactionTypesResponse
 
 class TransactionBase(BaseModel):
     dt_transaction: date = Field(..., description="Transaction's date", le=date.today())
-    ds_description: str = Field(..., description="Transaction's description", max_length=200)
+    ds_description: Optional[str] = Field(..., description="Transaction's description", max_length=200)
     ds_title: str = Field(..., description="Transaction's title", max_length=100)
     vl_transaction: Decimal = Field(..., description="Transaction's value", max_digits=10, decimal_places=2, gt=0)
 
