@@ -12,15 +12,16 @@ from src.routes import (
 # base.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
-    title="oiii",
-    description="calma",
+    title="expense-control",
+    description="expense-control service",
     root_path="/api/v1"
 )
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",
-        "http://127.0.0.1:5173"
+        "http://127.0.0.1:5173",
+        "https://gerenciador-despesas-three.vercel.app"
     ],
     allow_credentials=True,
     allow_methods=["*"],
