@@ -3,6 +3,7 @@ from collections import defaultdict
 from datetime import datetime, date
 from typing import Optional
 
+import requests
 from dateutil.relativedelta import relativedelta
 from pydantic import BaseModel, EmailStr, Field, field_validator, ConfigDict, computed_field
 
@@ -50,23 +51,36 @@ class UserResponse(UserBase):
     @computed_field
     @property
     def amount(self) -> AmountResponse:
-        if len(self.transactions) > 0:
-            return AmountResponse(
-                income=sum([
-                    t.vl_transaction if t.type.ds_title != PASSIVE_TYPE_TITLE
-                    else 0
-                    for t in self.transactions
-                ]),
-                outcome=sum([
-                    t.vl_transaction if t.type.ds_title == PASSIVE_TYPE_TITLE
-                    else 0
-                    for t in self.transactions
-                ])
-            )
+        income = 0
+        outcome = 0
+
+        for t in self.transactions:
+            vl = float(t.vl_transaction)
+            if t.currency.cd_iso != "BRL":
+                try:
+                    r = requests.get(
+                        "https://api.frankfurter.app/latest",
+                        params={
+                            "amount": vl,
+                            "from": t.currency.cd_iso,
+                            "to": "BRL"
+                        }
+                    )
+                    vl = float(r.json()["rates"]["BRL"])
+                except:
+                    return AmountResponse(
+                        income=-1,
+                        outcome=-1
+                    )
+
+            if t.type.ds_title == PASSIVE_TYPE_TITLE:
+                outcome += vl
+            else:
+                income += vl
 
         return AmountResponse(
-            income=0.0,
-            outcome=0.0
+            income=income,
+            outcome=outcome
         )
 
     @computed_field
